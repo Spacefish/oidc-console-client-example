@@ -12,9 +12,9 @@ namespace test_oidc_login;
 public class SystemBrowser : IBrowser
 {
     public int Port { get; }
-        private readonly string _path;
+        private readonly string? _path;
 
-        public SystemBrowser(int? port = null, string path = null)
+        public SystemBrowser(int? port = null, string? path = null)
         {
             _path = path;
 
@@ -104,7 +104,7 @@ public class SystemBrowser : IBrowser
 
         public string Url => _url;
 
-        public LoopbackHttpListener(int port, string path = null)
+        public LoopbackHttpListener(int port, string? path = null)
         {
             path = path ?? String.Empty;
             if (path.StartsWith("/")) path = path.Substring(1);
@@ -143,8 +143,10 @@ public class SystemBrowser : IBrowser
             });
         }
 
-        private async Task SetResultAsync(string value, HttpContext ctx)
+        private async Task SetResultAsync(string? value, HttpContext ctx)
         {
+            ArgumentNullException.ThrowIfNull(value, nameof(value));
+            
             _source.TrySetResult(value);
             
             try
