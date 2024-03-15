@@ -8,7 +8,8 @@ using test_oidc_login;
 public class Program
 {
     static readonly string Api = "https://demo.duendesoftware.com/api/dpop/test";
-    static readonly string Authority = "https://demo.duendesoftware.com";
+    // static readonly string Authority = "https://demo.duendesoftware.com";
+    static readonly string Authority = "https://login.microsoftonline.com/common/v2.0";
 
     private static OidcClient? _oidcClient;
     private static HttpClient _apiClient = new HttpClient { BaseAddress = new Uri(Api) };
@@ -36,12 +37,14 @@ public class Program
         var options = new OidcClientOptions
         {
             Authority = Authority,
-            ClientId = "native.dpop",
+            ClientId = "4713abec-f4ae-4ddb-b1e6-8be38f5ecf00",
             RedirectUri = redirectUri,
-            Scope = "openid profile api offline_access",
+            Scope = "openid profile offline_access",
             FilterClaims = false,
             Browser = browser,
         };
+        options.Policy.Discovery.ValidateIssuerName = false;
+        options.Policy.Discovery.ValidateEndpoints = false;
 
         options.ConfigureDPoP(proofKey); 
         
@@ -76,6 +79,7 @@ public class Program
         {
                 result = await _oidcClient.LoginAsync(new LoginRequest());
                 
+                Console.WriteLine(result);
                 Console.WriteLine("store refresh token");
                 File.WriteAllText("refresh_token", result.TokenResponse.RefreshToken);
 
